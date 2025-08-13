@@ -80,3 +80,6 @@ export function clear(): void {
     storage.clearAll()
   } catch {}
 }
+
+// Export mmkv adapter for Zustand persist
+export { mmkvStorage } from "./mmkv-adapter"
