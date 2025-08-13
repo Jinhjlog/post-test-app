@@ -16,6 +16,7 @@ if (__DEV__) {
   // If you turn it off in metro.config.js, you'll have to manually import it.
   require("./devtools/ReactotronConfig.ts")
 }
+import "reflect-metadata"
 import "./utils/gestureHandler"
 import "../global.css"
 
