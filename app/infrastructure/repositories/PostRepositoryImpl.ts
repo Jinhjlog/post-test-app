@@ -9,7 +9,7 @@ const GET_POSTS = "/posts"
 
 export class PostRepositoryImpl implements PostRepository {
   async getPosts(): Promise<Post[]> {
-    const response = await apiClient.apisauce.get<PostApiResponse[]>(GET_POSTS)
+    const response = await apiClient.apisauce.get<PostApiResponse>(GET_POSTS, { limit: 10 })
 
     if (!response.ok) {
       const problem = getGeneralApiProblem(response)
@@ -18,7 +18,7 @@ export class PostRepositoryImpl implements PostRepository {
     }
 
     try {
-      const rawDatas = response.data ?? []
+      const rawDatas = response.data?.posts ?? []
       return PostMapper.toDomainList(rawDatas)
     } catch (error) {
       logger.apiError("GET", GET_POSTS, error)

@@ -1,24 +1,24 @@
 import { Post } from "@/domain/models"
 
-import { PostApiResponse } from "../api"
+import { PostApiData } from "../api"
 
 export class PostMapper {
-  static toDomain(dto: PostApiResponse): Post {
+  static toDomain(dto: PostApiData): Post {
     return new Post({
-      id: dto.id,
-      title: dto.title,
-      body: dto.body,
-      tags: dto.tags,
-      reactions: {
-        likes: dto.reactions.likes,
-        dislikes: dto.reactions.dislikes,
+      _id: dto.id,
+      _title: dto.title,
+      _body: dto.body,
+      _tags: dto.tags,
+      _reactions: {
+        _likes: dto.reactions.likes,
+        _dislikes: dto.reactions.dislikes,
       },
-      views: dto.views,
-      userId: dto.userId,
+      _views: dto.views,
+      _userId: dto.userId,
     })
   }
 
-  static toDomainList(dtos: PostApiResponse[]): Post[] {
+  static toDomainList(dtos: PostApiData[]): Post[] {
     return dtos.map(this.toDomain)
   }
 }
