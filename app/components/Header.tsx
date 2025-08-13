@@ -208,9 +208,8 @@ export function Header(props: HeaderProps) {
             ]}
           >
             <Text
-              weight="medium"
-              size="md"
               text={titleContent}
+              className="text-base font-medium"
               style={[$title, $titleStyleOverride]}
             />
           </View>
@@ -251,7 +250,7 @@ function HeaderAction(props: HeaderActionProps) {
         disabled={!onPress}
         activeOpacity={0.8}
       >
-        <Text weight="medium" size="md" text={content} style={themed($actionText)} />
+        <Text text={content} className="text-base font-medium" style={themed($actionText)} />
       </TouchableOpacity>
     )
   }

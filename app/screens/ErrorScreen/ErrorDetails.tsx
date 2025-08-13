@@ -29,7 +29,7 @@ export function ErrorDetails(props: ErrorDetailsProps) {
     >
       <View style={$topSection}>
         <Icon icon="ladybug" size={64} />
-        <Text style={themed($heading)} preset="subheading" tx="errorScreen:title" />
+        <Text style={themed($heading)} tx="errorScreen:title" />
         <Text tx="errorScreen:friendlySubtitle" />
       </View>
 
@@ -37,7 +37,7 @@ export function ErrorDetails(props: ErrorDetailsProps) {
         style={themed($errorSection)}
         contentContainerStyle={themed($errorSectionContentContainer)}
       >
-        <Text style={themed($errorContent)} weight="bold" text={`${props.error}`.trim()} />
+        <Text style={themed($errorContent)} text={`${props.error}`.trim()} />
         <Text
           selectable
           style={themed($errorBacktrace)}
@@ -46,8 +46,8 @@ export function ErrorDetails(props: ErrorDetailsProps) {
       </ScrollView>
 
       <Button
-        preset="reversed"
-        style={themed($resetButton)}
+        className="bg-red-500 px-8 py-3 rounded-lg active:bg-red-600"
+        textClassName="text-white font-medium text-center"
         onPress={props.onReset}
         tx="errorScreen:reset"
       />
@@ -90,9 +90,4 @@ const $errorContent: ThemedStyle<TextStyle> = ({ colors }) => ({
 const $errorBacktrace: ThemedStyle<TextStyle> = ({ colors, spacing }) => ({
   marginTop: spacing.md,
   color: colors.textDim,
-})
-
-const $resetButton: ThemedStyle<ViewStyle> = ({ colors, spacing }) => ({
-  backgroundColor: colors.error,
-  paddingHorizontal: spacing.xxl,
 })
