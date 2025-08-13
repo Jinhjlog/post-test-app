@@ -4,6 +4,7 @@
     "allowJs": false,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "jsx": "react-native",
     "customConditions": ["react-native"],
     "module": "esnext",
@@ -28,7 +29,9 @@
   },
   "ts-node": {
     "compilerOptions": {
-      "module": "commonjs"
+      "module": "commonjs",
+      "experimentalDecorators": true,
+      "emitDecoratorMetadata": true
     }
   },
   "include": ["**/*.ts", "**/*.tsx", "nativewind-env.d.ts"],
