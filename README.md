@@ -1,77 +1,145 @@
-# Welcome to your new ignited app!
+# Post Test App
 
-> The latest and greatest boilerplate for Infinite Red opinions
+Ignite 보일러플레이트를 기반으로 한 React Native + TypeScript 모바일 앱 개발 실험 프로젝트입니다.
 
-This is the boilerplate that [Infinite Red](https://infinite.red) uses as a way to test bleeding-edge changes to our React Native stack.
+### 📁 폴더 구조
 
-- [Quick start documentation](https://github.com/infinitered/ignite/blob/master/docs/boilerplate/Boilerplate.md)
-- [Full documentation](https://github.com/infinitered/ignite/blob/master/docs/README.md)
+```
+app/
+├── domain/                 # 도메인 레이어 (비즈니스 로직)
+│   ├── models/            # 도메인 모델 (Post, User 등)
+│   └── repositories/      # Repository 인터페이스
+├── infrastructure/        # 인프라 레이어 (외부 연동)
+│   ├── api/              # API 클라이언트
+│   ├── di/               # DI 컨테이너 (tsyringe)
+│   ├── mappers/          # DTO ↔ Domain 변환
+│   └── repositories/     # Repository 구현체
+├── stores/               # 상태 관리 (Zustand)
+├── screens/              # 화면 컴포넌트
+├── components/           # 재사용 컴포넌트
+├── navigators/           # 네비게이션
+├── utils/                # 유틸리티 (logger 등)
+├── theme/                # 테마 시스템
+└── config/               # 환경 설정
+```
 
-## Getting Started
+### 🎯 핵심 특징
+
+- **Clean Architecture**: 레이어별 의존성 분리로 변경 영향 최소화
+- **DDD**: Domain Model로 비즈니스 로직 중앙화
+- **DI Container**: tsyringe 기반 의존성 주입
+- **Type Safety**: TypeScript strict mode 적용
+- **개발자 경험**: Reactotron 기반 로깅 시스템
+
+## 🛠️ 기술 스택
+
+### Core
+
+- **React Native 0.79.5** + **Expo 53**
+- **TypeScript**
+
+### State Management & API
+
+- **Zustand** - 상태 관리
+- **Apisauce** - HTTP 클라이언트
+- **tsyringe** - 의존성 주입
+
+### API
+
+- **[DummyJSON](https://dummyjson.com/docs)** - 테스트용 REST API
+
+## 🚀 시작하기
+
+### 필수 조건
+
+- Node.js 18+
+- npm or yarn
+- React Native 개발 환경 설정
+
+### 설치 및 실행
 
 ```bash
+# 의존성 설치
 npm install
+
+# 개발 서버 시작
 npm run start
+
+# 플랫폼별 실행
+npm run android  # Android
+npm run ios      # iOS
 ```
 
-To make things work on your local simulator, or on your phone, you need first to [run `eas build`](https://github.com/infinitered/ignite/blob/master/docs/expo/EAS.md). We have many shortcuts on `package.json` to make it easier:
+### 빌드
 
 ```bash
-npm run build:ios:sim # build for ios simulator
-npm run build:ios:dev # build for ios device
-npm run build:ios:prod # build for ios device
+# 시뮬레이터용
+npm run build:ios:sim
+npm run build:android:sim
+
+# 디바이스용
+npm run build:ios:dev
+npm run build:android:dev
 ```
 
-### `./assets` directory
+## 📚 아키텍처 세부사항
 
-This directory is designed to organize and store various assets, making it easy for you to manage and use them in your application. The assets are further categorized into subdirectories, including `icons` and `images`:
-
-```tree
-assets
-├── icons
-└── images
-```
-
-**icons**
-This is where your icon assets will live. These icons can be used for buttons, navigation elements, or any other UI components. The recommended format for icons is PNG, but other formats can be used as well.
-
-Ignite comes with a built-in `Icon` component. You can find detailed usage instructions in the [docs](https://github.com/infinitered/ignite/blob/master/docs/boilerplate/app/components/Icon.md).
-
-**images**
-This is where your images will live, such as background images, logos, or any other graphics. You can use various formats such as PNG, JPEG, or GIF for your images.
-
-Another valuable built-in component within Ignite is the `AutoImage` component. You can find detailed usage instructions in the [docs](https://github.com/infinitered/ignite/blob/master/docs/Components-AutoImage.md).
-
-How to use your `icon` or `image` assets:
+### Domain Layer
 
 ```typescript
-import { Image } from 'react-native';
-
-const MyComponent = () => {
-  return (
-    <Image source={require('assets/images/my_image.png')} />
-  );
-};
+export class Post {
+  get id(): string {
+    return this._id
+  }
+  get title(): string {
+    return this._title
+  }
+  // ... getter methods for encapsulation
+}
 ```
 
-## Running Maestro end-to-end tests
+### Infrastructure Layer
 
-Follow our [Maestro Setup](https://ignitecookbook.com/docs/recipes/MaestroSetup) recipe.
+```typescript
+// API DTO와 Domain Model 간 변환
+export class PostMapper {
+  static toDomain(dto: PostApiData): Post { ... }
+  static toDomainList(dtos: PostApiData[]): Post[] { ... }
+}
+```
 
-## Next Steps
+### DI Container
 
-### Ignite Cookbook
+```typescript
+// tsyringe 기반 의존성 주입
+container.register("PostRepository", { useClass: PostRepositoryImpl })
+```
 
-[Ignite Cookbook](https://ignitecookbook.com/) is an easy way for developers to browse and share code snippets (or “recipes”) that actually work.
+### Store Layer
 
-### Upgrade Ignite boilerplate
+```typescript
+// Zustand 기반 상태 관리
+export const usePostStore = create<PostState>((set, get) => ({
+  posts: [],
+  fetchPosts: async () => { ... }
+}))
+```
 
-Read our [Upgrade Guide](https://ignitecookbook.com/docs/recipes/UpdatingIgnite) to learn how to upgrade your Ignite project.
+### 로깅
 
-## Community
+```typescript
+// 개발환경에서만 동작하는 로거
+import { logger } from "@/utils/logger"
 
-⭐️ Help us out by [starring on GitHub](https://github.com/infinitered/ignite), filing bug reports in [issues](https://github.com/infinitered/ignite/issues) or [ask questions](https://github.com/infinitered/ignite/discussions).
+logger.apiSuccess("GET", "/posts", data)
+logger.error("POST_ERROR", "API 호출 실패", error)
+```
 
-💬 Join us on [Slack](https://join.slack.com/t/infiniteredcommunity/shared_invite/zt-1f137np4h-zPTq_CbaRFUOR_glUFs2UA) to discuss.
+## 📖 참고 자료
 
-📰 Make our Editor-in-chief happy by [reading the React Native Newsletter](https://reactnativenewsletter.com/).
+- [Ignite CLI Documentation](https://github.com/infinitered/ignite)
+- [DummyJSON API Documentation](https://dummyjson.com/docs)
+- [tsyringe Documentation](https://github.com/microsoft/tsyringe)
+- [Zustand Documentation](https://github.com/pmndrs/zustand)
+
+---
