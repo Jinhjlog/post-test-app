@@ -1,9 +1,11 @@
 import { container } from "tsyringe"
 import { create } from "zustand"
+import { persist } from "zustand/middleware"
 
 import { Post } from "@/domain/models"
 import { PostRepository } from "@/domain/repositories"
 import { POST_REPOSITORY } from "@/infrastructure/di"
+import { mmkvStorage } from "@/utils/storage"
 
 interface PostState {
   // State
@@ -25,60 +27,73 @@ interface PostState {
   reset: () => void
 }
 
-export const usePostStore = create<PostState>((set, get) => ({
-  // Initial state
-  posts: {},
-  currentPostId: undefined,
-  loading: false,
-  error: undefined,
-
-  getCurrentPost: () => {
-    const { posts, currentPostId } = get()
-    return currentPostId ? posts[currentPostId] : undefined
-  },
-
-  fetchPosts: async () => {
-    set({ loading: true, error: undefined })
-    try {
-      const postRepository = container.resolve<PostRepository>(POST_REPOSITORY)
-
-      const posts = await postRepository.getPosts()
-
-      if (posts.length > 0) {
-        const postsMap = posts.reduce<Record<string, Post>>((acc, post) => {
-          acc[post.id] = post
-          return acc
-        }, {})
-
-        set({ posts: postsMap, loading: false })
-      }
-    } catch (error) {
-      // TODO: API 호출 시 에러가 발생했을 때 사용하는 에러 클래스가 필요함 (구현 할 것)
-      if (error instanceof Error) {
-        set({ error: error.message })
-        return
-      }
-
-      set({ error: "알 수 없는 오류가 발생했습니다." })
-      return
-    } finally {
-      set({ loading: false })
-    }
-  },
-
-  setCurrentPost: (id: string) => {
-    set({ currentPostId: id })
-  },
-
-  clearError: () => {
-    set({ error: undefined })
-  },
-
-  reset: () =>
-    set({
+export const usePostStore = create<PostState>()(
+  persist(
+    (set, get) => ({
+      // Initial state
       posts: {},
       currentPostId: undefined,
       loading: false,
       error: undefined,
+
+      getCurrentPost: () => {
+        const { posts, currentPostId } = get()
+        return currentPostId ? posts[currentPostId] : undefined
+      },
+
+      fetchPosts: async () => {
+        set({ loading: true, error: undefined })
+        try {
+          const postRepository = container.resolve<PostRepository>(POST_REPOSITORY)
+
+          const posts = await postRepository.getPosts()
+
+          if (posts.length > 0) {
+            const postsMap = posts.reduce<Record<string, Post>>((acc, post) => {
+              acc[post.id] = post
+              return acc
+            }, {})
+
+            set({ posts: postsMap, loading: false })
+          }
+        } catch (error) {
+          // TODO: API 호출 시 에러가 발생했을 때 사용하는 에러 클래스가 필요함 (구현 할 것)
+          if (error instanceof Error) {
+            set({ error: error.message })
+            return
+          }
+
+          set({ error: "알 수 없는 오류가 발생했습니다." })
+          return
+        } finally {
+          set({ loading: false })
+        }
+      },
+
+      setCurrentPost: (id: string) => {
+        set({ currentPostId: id })
+      },
+
+      clearError: () => {
+        set({ error: undefined })
+      },
+
+      reset: () =>
+        set({
+          posts: {},
+          currentPostId: undefined,
+          loading: false,
+          error: undefined,
+        }),
     }),
-}))
+    {
+      name: "post-store", // MMKV에 저장될 키 이름
+      storage: mmkvStorage,
+      partialize: (state) => ({
+        posts: state.posts,
+        currentPostId: state.currentPostId,
+        // loading과 error는 저장하지 않음 (앱 시작 시마다 초기값으로 시작)
+      }),
+    },
+  ),
+)
