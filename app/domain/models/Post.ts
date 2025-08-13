@@ -33,8 +33,11 @@ export class Post implements PostProps {
   get tags(): string[] {
     return [...this._tags]
   }
-  get reactions(): { _likes: number; _dislikes: number } {
-    return { ...this._reactions }
+  get reactions(): { likes: number; dislikes: number } {
+    return {
+      likes: this._reactions._likes,
+      dislikes: this._reactions._dislikes,
+    }
   }
   get views(): number {
     return this._views

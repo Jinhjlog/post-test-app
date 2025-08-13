@@ -46,15 +46,7 @@ export const usePostStore = create<PostState>((set, get) => ({
 
       if (posts.length > 0) {
         const postsMap = posts.reduce<Record<string, Post>>((acc, post) => {
-          acc[post._id] = new Post({
-            _id: post._id,
-            _title: post.title,
-            _body: post.body,
-            _tags: post.tags,
-            _reactions: post.reactions,
-            _views: post.views,
-            _userId: post.userId,
-          })
+          acc[post.id] = post
           return acc
         }, {})
 
